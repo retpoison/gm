@@ -8,7 +8,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	//"fyne.io/fyne/v2/theme"
 )
 
 var player Pl.Player
@@ -17,7 +16,6 @@ var config Conf.Config
 func Run(p Pl.Player, c Conf.Config) {
 	config = c
 	player = p
-	defer player.Close()
 
 	log.Println("Initializing gui.")
 	app := app.New()
@@ -41,5 +39,4 @@ func Run(p Pl.Player, c Conf.Config) {
 
 	log.Println("Runing gui.")
 	window.ShowAndRun()
-
 }

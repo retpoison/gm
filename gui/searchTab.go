@@ -1,15 +1,12 @@
 package gui
 
 import (
-	"fmt"
-
-	Inv "gm/invidious"
+	Pip "gm/piped"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	xwidget "fyne.io/x/fyne/widget"
 )
@@ -69,7 +66,7 @@ func onChanged(s string) {
 	}
 
 	go func() {
-		var suggestion, err = Inv.GetSuggestions(config.Instance, entry.Text)
+		var suggestion, err = Pip.GetSuggestions(config.Instance, entry.Text)
 		if err != nil {
 			entry.HideCompletion()
 			return
@@ -87,33 +84,30 @@ func onChanged(s string) {
 
 func updateSearchResault(query string) {
 	searchResault.RemoveAll()
-	var videos, _ = Inv.Search(config.Instance, query, "video", 1)
-	var uri fyne.URI
+	var videos, _ = Pip.Search(config.Instance, query, "videos")
 	var thumbnail *canvas.Image
 	var title *tLabel
 	var channel *tLabel
 	var duration *widget.Label
 
 	for _, v := range videos {
-		uri, _ = storage.ParseURI(v.VideoThumbnail[len(v.VideoThumbnail)-1].Url)
-		thumbnail = canvas.NewImageFromURI(uri)
+		thumbnail = canvas.NewImageFromImage(v.GetThumbnail())
 
 		title = newtLabel(v.Title)
 		title.Id = v.VideoId
 		title.Wrapping = fyne.TextWrapWord
 		title.TextStyle = fyne.TextStyle{Bold: true}
 		title.OnTapped = func(id string) {
-			var video = Inv.GetVideo(config.Instance, id)
-			player.Play(video.Format[0].Url)
+			var video = Pip.GetVideo(config.Instance, id)
+			player.Play(video.AudioStreams[0].Url)
 			player.Resume()
 			go updateHomeTab(video)
 		}
 
-		channel = newtLabel(v.Author)
+		channel = newtLabel(v.Uploader)
 		channel.Wrapping = fyne.TextWrapWord
 
-		duration = widget.NewLabel(fmt.Sprintf("%02d:%02d",
-			v.Length/60, v.Length%60))
+		duration = widget.NewLabel(v.FormatedDuration)
 		duration.Wrapping = fyne.TextWrapWord
 		searchResault.Add(container.NewGridWithColumns(2, thumbnail,
 			container.NewGridWithRows(3, title, channel, duration)))

@@ -20,3 +20,6 @@ gm
 
 # Go workspace file
 go.work
+
+# Config file
+*.json

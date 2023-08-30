@@ -36,7 +36,7 @@ func Init() Config {
 	log.Println("Reading config done.")
 	conf.viper = vp
 
-	conf.Instance = *(flag.String("config", vp.GetString("invidious.instance"), "path to the config file"))
+	conf.Instance = *(flag.String("config", vp.GetString("piped.instance"), "path to the config file"))
 	conf.Proxy.Url = *(flag.String("proxy", vp.GetString("proxy.url"), "proxy url"))
 	conf.Proxy.Port = *(flag.String("port", vp.GetString("proxy.port"), "proxy port"))
 	flag.Parse()

@@ -1,8 +1,9 @@
 package gui
 
 import (
-	Inv "gm/invidious"
+	Pip "gm/piped"
 	Pl "gm/player"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -12,17 +13,19 @@ import (
 )
 
 func getSettingTab() fyne.CanvasObject {
-	var instancesLabel = widget.NewLabel("Invidious Instances")
+	var instancesLabel = widget.NewLabel("Piped Instances")
 	var selectInstance = widget.NewSelect([]string{},
 		func(s string) {
-			config.Set("invidious.instance", s)
+			config.Set("piped.instance", s)
 			config.Instance = s
+			log.Println("Using", s)
 		})
 	selectInstance.Selected = config.Instance
 
 	refreshBtn := widget.NewButtonWithIcon("Refresh", theme.ViewRefreshIcon(), func() {
+		log.Println("Refreshing instances")
 		go func() {
-			var ins []string = Inv.GetInstances()
+			var ins []string = Pip.GetInstances()
 			selectInstance.Options = ins
 			selectInstance.SetSelected(ins[0])
 		}()

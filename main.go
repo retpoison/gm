@@ -12,5 +12,6 @@ func main() {
 
 	var config Conf.Config = Conf.Init()
 	var player Pl.Player = Pl.Init(config.Proxy.Url + ":" + config.Proxy.Port)
+	defer player.Close()
 	Gui.Run(player, config)
 }

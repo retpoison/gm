@@ -4,27 +4,25 @@ import (
 	"fmt"
 	"time"
 
-	Inv "gm/invidious"
+	Pip "gm/piped"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
-var video Inv.Video
+var video Pip.Video
 var thumbnailTitleContainer *fyne.Container
 
-func updateHomeTab(v Inv.Video) {
+func updateHomeTab(v Pip.Video) {
 	video = v
-	var uri, _ = storage.ParseURI(video.VideoThumbnail[0].Url)
-	thumbnailTitleContainer.Objects[0] = canvas.NewImageFromURI(uri)
+	thumbnailTitleContainer.Objects[0] = canvas.NewImageFromImage(video.GetThumbnail())
 	thumbnailTitleContainer.Objects[1].(*widget.Label).SetText(fmt.Sprintf("%s\n%s",
-		v.Title, v.Author))
+		video.Title, video.Uploader))
 }
 
 func getHomeTab() fyne.CanvasObject {
@@ -67,13 +65,6 @@ func getHomeTab() fyne.CanvasObject {
 	var thumbnail *canvas.Image
 
 	thumbnail = canvas.NewImageFromResource(theme.FileImageIcon())
-	if video.VideoThumbnail != nil {
-		var uri, _ = storage.ParseURI(video.VideoThumbnail[len(video.VideoThumbnail)-1].Url)
-		thumbnail = canvas.NewImageFromURI(uri)
-		thumbnail.Refresh()
-		if thumbnail != nil {
-		}
-	}
 
 	title = widget.NewLabel(video.Title)
 	title.Wrapping = fyne.TextWrapWord
@@ -105,8 +96,8 @@ func updateStatus(slide binding.Float,
 		slide.Set(player.PercentPosition())
 
 		var cp float64 = player.Position()
-		var cpString string = fmt.Sprintf("%02d:%02d / %02d:%02d",
-			video.Length/60, video.Length%60, int(cp)/60, int(cp)%60)
+		var cpString string = fmt.Sprintf("%s / %02d:%02d:%02d",
+			video.FormatedDuration, int(cp)/60/60, int(cp)/60%60, int(cp)%60)
 		cPos.Set(cpString)
 	}
 
