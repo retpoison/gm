@@ -1,0 +1,16 @@
+gm
+==
+Play youtube audio with fyne and mpv.
+
+
+Installation
+------------
+    git clone https://github.com/retpoison/gm.git
+    cd gm
+    go build
+    ./gm
+
+
+Dependencies
+------------
+mpv and go.
